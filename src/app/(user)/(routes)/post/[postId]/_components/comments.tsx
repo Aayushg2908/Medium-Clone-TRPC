@@ -9,7 +9,7 @@ const AllComments = ({ postId }: { postId: string }) => {
   return (
     <div className="flex flex-col gap-4">
       {data?.map((comment) => (
-        <CommentById comment={comment} />
+        <CommentById comment={comment} key={comment.id} />
       ))}
     </div>
   );

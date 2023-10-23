@@ -30,13 +30,15 @@ const ProfileForm = () => {
   const router = useRouter();
   const { data, isLoading: loading } = trpc.onboarding.useQuery();
   const { user, isLoaded } = useUser();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: user?.fullName || "",
+      imageURL: user?.imageUrl,
+      bio: "",
+    },
+  });
 
-  if (loading) return <Spinner />;
-
-  if (data) {
-    redirect("/home");
-  }
-  
   const onboarding = trpc.createUser.useMutation({
     onSuccess: (data) => {
       if (data.code === 400) {
@@ -48,18 +50,15 @@ const ProfileForm = () => {
     },
   });
 
+  if (loading) return <Spinner />;
+
+  if (data) {
+    redirect("/home");
+  }
+
   if (!isLoaded) {
     return <Spinner />;
   }
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: user?.fullName || "",
-      imageURL: user?.imageUrl,
-      bio: "",
-    },
-  });
 
   const isLoading = form.formState.isSubmitting;
 
