@@ -20,7 +20,7 @@ const UserPosts = () => {
       <div className="mt-4 font-semibold text-2xl">Your Posts</div>
       <div className="w-full lg:w-2/3 mt-4 flex flex-col items-center">
         {data?.map((post) => (
-          <Link href={`post/${post.id}`}>
+          <Link href={`post/${post.id}`} key={post.id}>
             <Card className="w-[300px] sm:w-[450px] my-4 transition duration-200 shadow-lg hover:shadow-xl hover:scale-105">
               <CardHeader>
                 <div className="flex gap-2 items-center">

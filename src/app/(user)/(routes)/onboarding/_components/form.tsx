@@ -29,6 +29,7 @@ const formSchema = z.object({
 const ProfileForm = () => {
   const router = useRouter();
   const { data, isLoading: loading } = trpc.onboarding.useQuery();
+  const { user, isLoaded } = useUser();
 
   if (loading) return <Spinner />;
 
@@ -46,8 +47,6 @@ const ProfileForm = () => {
       }
     },
   });
-
-  const { user, isLoaded } = useUser();
 
   if (!isLoaded) {
     return <Spinner />;

@@ -38,7 +38,7 @@ const CommentById = ({ comment }: CommentProps) => {
   const { data } = trpc.commentOwner.useQuery(comment.id);
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2" key={comment.id}>
       <div className="flex gap-2 items-center">
         <Image
           alt="userImage"
