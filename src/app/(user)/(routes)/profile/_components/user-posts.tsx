@@ -12,6 +12,26 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 
+interface Post {
+  title: string;
+  id: string;
+  thumbnail: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  authorId: string;
+  author: {
+    id: string;
+    username: string;
+    imageURL: string;
+    bio: string;
+    userid: string;
+    email: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
+
 const UserPosts = () => {
   const { data } = trpc.userPosts.useQuery();
 
@@ -19,7 +39,7 @@ const UserPosts = () => {
     <>
       <div className="mt-4 font-semibold text-2xl">Your Posts</div>
       <div className="w-full lg:w-2/3 mt-4 flex flex-col items-center">
-        {data?.map((post) => (
+        {data?.map((post: Post) => (
           <Link href={`post/${post.id}`} key={post.id}>
             <Card className="w-[300px] sm:w-[450px] my-4 transition duration-200 shadow-lg hover:shadow-xl hover:scale-105">
               <CardHeader>

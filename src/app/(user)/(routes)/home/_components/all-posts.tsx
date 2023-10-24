@@ -12,12 +12,32 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 
+interface Post {
+  id: string;
+  title: string;
+  thumbnail: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  authorId: string;
+  author: {
+    id: string;
+    username: string;
+    imageURL: string;
+    bio: string;
+    userid: string;
+    email: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
+
 const AllPosts = () => {
   const { data } = trpc.allPosts.useQuery();
 
   return (
     <div className="w-full lg:w-2/3 mt-4 flex flex-col items-center">
-      {data?.map((post) => (
+      {data?.map((post: Post) => (
         <Link href={`post/${post.id}`} key={post.id}>
           <Card className="w-[220px] sm:w-[500px] my-4 transition duration-200 shadow-lg hover:shadow-xl hover:scale-105">
             <CardHeader>
