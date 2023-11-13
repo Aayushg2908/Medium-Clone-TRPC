@@ -12,7 +12,7 @@ const MembershipContent = () => {
           Become a Medium member to enjoy unlimited access and directly support
           the writers you read most.
         </div>
-        <SignInButton mode="modal" redirectUrl="/home/membership">
+        <SignInButton mode="modal" redirectUrl="/home">
           <Button
             variant="outline"
             className="rounded-full mt-4 text-black text-lg"

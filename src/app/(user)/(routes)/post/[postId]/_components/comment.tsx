@@ -4,6 +4,7 @@ import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import { trpc } from "@/app/_trpc/client";
 import { toast } from "react-hot-toast";
+import { useCommentStore } from "../_hooks/hook";
 
 interface CommentProps {
   comment: {
@@ -27,11 +28,14 @@ interface CommentProps {
 }
 
 const CommentById = ({ comment }: CommentProps) => {
+  const setSomeOneCommented = useCommentStore(
+    (state) => state.setSomeOneCommented
+  );
   const deleteComment = trpc.deleteComment.useMutation({
     onSuccess: (data) => {
       if (data.code === 200) {
         toast.success("Comment Deleted Successfully");
-        window.location.reload();
+        setSomeOneCommented();
       }
     },
   });
@@ -56,7 +60,7 @@ const CommentById = ({ comment }: CommentProps) => {
               await deleteComment.mutate(comment.id);
             }}
           >
-            <Trash2 />
+            <Trash2 className="fill-red-500" />
           </div>
         )}
       </div>

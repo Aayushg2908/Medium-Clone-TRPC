@@ -3,6 +3,7 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useState, useEffect } from "react";
 import { trpc } from "@/app/_trpc/client";
 import { Spinner } from "@/components/loader";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import AllComments from "./comments";
+import { useCommentStore } from "../_hooks/hook";
 
 const formSchema = z.object({
   content: z.string().min(2).max(50),
@@ -42,14 +44,19 @@ const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
 const PostById = ({ postId }: { postId: string }) => {
   const router = useRouter();
+  const [someOneLiked, setSomeOneLiked] = useState(false);
+  const setSomeOneCommented = useCommentStore(
+    (state) => state.setSomeOneCommented
+  );
   const { data, isLoading } = trpc.postById.useQuery(postId);
   const { data: owner } = trpc.postOwner.useQuery(postId);
-  const { data: userLiked } = trpc.hasCurrentUserLiked.useQuery(postId);
+  const UserLiked = trpc.hasCurrentUserLiked.useQuery(postId);
+  const userLiked = UserLiked.data;
   const createComment = trpc.createComment.useMutation({
     onSuccess: (data) => {
       if (data.code === 200) {
         toast.success("Comment Created Successfully");
-        window.location.reload();
+        setSomeOneCommented();
       }
     },
   });
@@ -60,7 +67,7 @@ const PostById = ({ postId }: { postId: string }) => {
       } else if (data.code === 201) {
         toast.success("Post Unliked Successfully");
       }
-      window.location.reload();
+      setSomeOneLiked(!someOneLiked);
     },
   });
   const deletePost = trpc.deletePost.useMutation({
@@ -77,6 +84,11 @@ const PostById = ({ postId }: { postId: string }) => {
       content: "",
     },
   });
+
+  useEffect(() => {
+    UserLiked.refetch();
+  }, [someOneLiked]);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     await createComment.mutate({ ...values, postId });
     form.reset();

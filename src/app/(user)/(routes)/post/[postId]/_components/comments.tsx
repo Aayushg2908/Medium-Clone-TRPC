@@ -2,6 +2,9 @@
 
 import { trpc } from "@/app/_trpc/client";
 import CommentById from "./comment";
+import { Dispatch, useEffect } from "react";
+import { useStore } from "zustand";
+import { useCommentStore } from "../_hooks/hook";
 
 interface Comment {
   id: string;
@@ -23,7 +26,13 @@ interface Comment {
 }
 
 const AllComments = ({ postId }: { postId: string }) => {
-  const { data } = trpc.getAllComments.useQuery(postId);
+  const someOneCommented = useCommentStore((state) => state.someOneCommented);
+  const allComments = trpc.getAllComments.useQuery(postId);
+  const data = allComments.data;
+
+  useEffect(() => {
+    allComments.refetch();
+  }, [someOneCommented]);
 
   return (
     <div className="flex flex-col gap-4">

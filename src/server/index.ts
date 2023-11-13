@@ -124,6 +124,9 @@ export const appRouter = router({
       include: {
         author: true,
       },
+      orderBy: {
+        createdAt: "desc",
+      }
     });
     return posts;
   }),
