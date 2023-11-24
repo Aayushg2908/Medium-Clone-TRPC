@@ -93,6 +93,7 @@ export const appRouter = router({
         title: z.string().min(2).max(50),
         thumbnail: z.string().url(),
         content: z.string().min(1),
+        categoryId: z.string().min(1),
       })
     )
     .mutation(async (opts) => {
@@ -112,6 +113,7 @@ export const appRouter = router({
           title: opts.input.title,
           thumbnail: opts.input.thumbnail,
           content: opts.input.content,
+          categoryId: opts.input.categoryId,
         },
       });
       return {
@@ -126,7 +128,7 @@ export const appRouter = router({
       },
       orderBy: {
         createdAt: "desc",
-      }
+      },
     });
     return posts;
   }),
@@ -402,6 +404,40 @@ export const appRouter = router({
     });
     return posts;
   }),
+  getAllCategories: privateProcedure.query(async (opts) => {
+    const categories = await prismadb.category.findMany({
+      orderBy: {
+        name: "asc",
+      },
+    });
+
+    return categories;
+  }),
+  getPostsByCategory: privateProcedure
+    .input(
+      z.object({
+        categoryName: z.string().min(1),
+      })
+    )
+    .query(async (opts) => {
+      const { categoryName } = opts.input;
+
+      const posts = await prismadb.post.findMany({
+        where: {
+          category: {
+            name: categoryName,
+          },
+        },
+        include: {
+          author: true
+        },
+        orderBy: {
+          createdAt: "desc",
+        }
+      });
+
+      return posts;
+    }),
 });
 
 export type AppRouter = typeof appRouter;

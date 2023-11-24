@@ -45,10 +45,11 @@ const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 const PostById = ({ postId }: { postId: string }) => {
   const router = useRouter();
   const [someOneLiked, setSomeOneLiked] = useState(false);
+  const [loading, setLoading] = useState(false);
   const setSomeOneCommented = useCommentStore(
     (state) => state.setSomeOneCommented
   );
-  const { data, isLoading } = trpc.postById.useQuery(postId);
+  const { data, isLoading, refetch } = trpc.postById.useQuery(postId);
   const { data: owner } = trpc.postOwner.useQuery(postId);
   const UserLiked = trpc.hasCurrentUserLiked.useQuery(postId);
   const userLiked = UserLiked.data;
@@ -87,6 +88,7 @@ const PostById = ({ postId }: { postId: string }) => {
 
   useEffect(() => {
     UserLiked.refetch();
+    refetch();
   }, [someOneLiked]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -107,7 +109,14 @@ const PostById = ({ postId }: { postId: string }) => {
   };
 
   const handleClick = async () => {
-    await deletePost.mutate(postId);
+    try {
+      setLoading(true);
+      await deletePost.mutateAsync(postId);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -127,7 +136,11 @@ const PostById = ({ postId }: { postId: string }) => {
             Edit
           </Button>
         )}
-        {owner && <Button onClick={handleClick}>Delete</Button>}
+        {owner && (
+          <Button disabled={loading} onClick={handleClick}>
+            Delete
+          </Button>
+        )}
       </div>
       <div className="w-2/6 p-4 flex items-center gap-6 border-b border-b-gray-200">
         <div

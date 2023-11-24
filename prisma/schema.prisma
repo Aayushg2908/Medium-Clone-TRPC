@@ -31,6 +31,8 @@ model Post {
   thumbnail String
   authorId  String   @db.ObjectId
   author    User     @relation(fields: [authorId], references: [id])
+  categoryId  String?  @db.ObjectId
+  category    Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   comment   Comment[]
   like      Like[]
   createdAt DateTime @default(now())
@@ -43,7 +45,7 @@ model Comment {
   authorId  String   @db.ObjectId
   author    User     @relation(fields: [authorId], references: [id])
   postId    String   @db.ObjectId
-  post      Post     @relation(fields: [postId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -53,7 +55,13 @@ model Like {
   authorId  String   @db.ObjectId
   author    User     @relation(fields: [authorId], references: [id])
   postId    String   @db.ObjectId
-  post      Post     @relation(fields: [postId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name     String   @unique
+  posts      Post[]
 }

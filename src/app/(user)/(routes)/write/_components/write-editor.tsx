@@ -18,16 +18,23 @@ import ThumbnailImage from "./thumbnail-image";
 import { trpc } from "@/app/_trpc/client";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { Category } from "@prisma/client";
+import { Combobox } from "@/components/ui/combobox";
+
+interface PostEditorProps {
+  categories: Category[];
+}
 
 const formSchema = z.object({
   title: z.string().min(2).max(50),
   thumbnail: z.string().url(),
   content: z.string().min(1),
+  categoryId: z.string().min(1),
 });
 
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
-export const PostEditor = () => {
+export const PostEditor = ({ categories }: PostEditorProps) => {
   const router = useRouter();
   const createdPost = trpc.createPost.useMutation({
     onSuccess: (data) => {
@@ -44,6 +51,7 @@ export const PostEditor = () => {
       title: "",
       thumbnail: "",
       content: "",
+      categoryId: "",
     },
   });
 
@@ -92,6 +100,24 @@ export const PostEditor = () => {
                 <FormDescription>
                   This is your public display name.
                 </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="categoryId"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Combobox
+                    options={categories.map((category) => ({
+                      label: category.name,
+                      value: category.id,
+                    }))}
+                    {...field}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

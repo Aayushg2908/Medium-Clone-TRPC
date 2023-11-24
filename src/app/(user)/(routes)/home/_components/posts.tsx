@@ -1,11 +1,15 @@
-import React from "react";
 import Sidebar from "./sidebar";
 import AllPosts from "./all-posts";
+import { Category } from "@prisma/client";
 
-const Posts = () => {
+interface PostProps {
+  categories: Category[] | undefined;
+}
+
+const Posts = ({ categories }: PostProps) => {
   return (
     <div className="flex">
-      <AllPosts />
+      <AllPosts categories={categories} />
       <Sidebar />
     </div>
   );
