@@ -14,7 +14,7 @@ export function Categories({
           <TabsTrigger value="home">For You</TabsTrigger>
         </Link>
         {categories?.map((category) => (
-          <Link href={`/home?categoryName=${category.name}`}>
+          <Link key={category.id} href={`/home?categoryName=${category.name}`}>
             <TabsTrigger key={category.id} value={category.name}>
               {category.name}
             </TabsTrigger>
