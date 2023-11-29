@@ -46,7 +46,7 @@ const AllPosts = ({ categories }: { categories: Category[] | undefined }) => {
   if (category === null) {
     return (
       <div className="w-full mt-4 flex flex-col items-center">
-        <Categories categories={categories} />
+        <Categories items={categories} />
         {data?.map((post: Post) => (
           <Link href={`post/${post.id}`} key={post.id}>
             <Card className="w-[250px] sm:w-[500px] my-4 transition duration-200 shadow-lg hover:shadow-xl hover:scale-105">
@@ -85,7 +85,7 @@ const AllPosts = ({ categories }: { categories: Category[] | undefined }) => {
   if (posts && posts.length === 0) {
     return (
       <div className="w-full mt-4 flex flex-col items-center">
-        <Categories categories={categories} />
+        <Categories items={categories} />
         No Posts Found
       </div>
     );
@@ -93,7 +93,7 @@ const AllPosts = ({ categories }: { categories: Category[] | undefined }) => {
 
   return (
     <div className="w-full mt-4 flex flex-col items-center">
-      <Categories categories={categories} />
+      <Categories items={categories} />
       {posts?.map((post: Post) => (
         <Link href={`post/${post.id}`} key={post.id}>
           <Card className="w-[250px] sm:w-[500px] my-4 transition duration-200 shadow-lg hover:shadow-xl hover:scale-105">

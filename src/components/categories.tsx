@@ -1,26 +1,42 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+"use client";
 import { Category } from "@prisma/client";
-import Link from "next/link";
+import {
+  FcEngineering,
+  FcFilmReel,
+  FcMultipleDevices,
+  FcMusic,
+  FcOldTimeCamera,
+  FcSalesPerformance,
+  FcSportsMode,
+} from "react-icons/fc";
+import { IconType } from "react-icons";
+import { CategoryItem } from "./category-item";
 
-export function Categories({
-  categories,
-}: {
-  categories: Category[] | undefined;
-}) {
-  return (
-    <Tabs defaultValue="home" className="hidden sm:inline-block lg:w-fit">
-      <TabsList className="flex gap-x-2 ">
-        <Link href="/home">
-          <TabsTrigger value="home">For You</TabsTrigger>
-        </Link>
-        {categories?.map((category) => (
-          <Link key={category.id} href={`/home?categoryName=${category.name}`}>
-            <TabsTrigger key={category.id} value={category.name}>
-              {category.name}
-            </TabsTrigger>
-          </Link>
-        ))}
-      </TabsList>
-    </Tabs>
-  );
+interface CategoriesProps {
+  items: Category[] | undefined;
 }
+
+const iconMap: Record<Category["name"], IconType> = {
+  Music: FcMusic,
+  Photography: FcOldTimeCamera,
+  Fitness: FcSportsMode,
+  Accounting: FcSalesPerformance,
+  "Computer Science": FcMultipleDevices,
+  Filming: FcFilmReel,
+  Engineering: FcEngineering,
+};
+
+export const Categories = ({ items }: CategoriesProps) => {
+  return (
+    <div className="grid grid-cols-2 gap-y-1 sm:grid-cols-3 lg:flex items-center gap-x-2 overflow-x-auto pb-2">
+      {items && items.map((item) => (
+        <CategoryItem
+          key={item.id}
+          label={item.name}
+          icon={iconMap[item.name]}
+          value={item.id}
+        />
+      ))}
+    </div>
+  );
+};
