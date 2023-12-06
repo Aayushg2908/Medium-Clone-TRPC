@@ -1,6 +1,9 @@
 import prismadb from "@/lib/prismadb";
 import { publicProcedure, router, privateProcedure } from "./trpc";
 import { z } from "zod";
+import { checkApiLimit, incrementApiLimit } from "@/lib/api-limit";
+import { checkSubscription } from "@/lib/subscription";
+import { TRPCError } from "@trpc/server";
 
 export const appRouter = router({
   onboarding: privateProcedure.query(async (opts) => {
@@ -97,6 +100,8 @@ export const appRouter = router({
       })
     )
     .mutation(async (opts) => {
+      const freeTrial = await checkApiLimit();
+      const isPro = await checkSubscription();
       const user = await prismadb.user.findUnique({
         where: {
           userid: opts.ctx.user.id,
@@ -107,6 +112,13 @@ export const appRouter = router({
           code: 404,
         };
       }
+
+      if (!freeTrial && !isPro) {
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+        });
+      }
+
       const post = await prismadb.post.create({
         data: {
           authorId: user.id,
@@ -116,6 +128,11 @@ export const appRouter = router({
           categoryId: opts.input.categoryId,
         },
       });
+
+      if (!isPro) {
+        await incrementApiLimit();
+      }
+
       return {
         code: 200,
         post: post,
@@ -429,15 +446,19 @@ export const appRouter = router({
           },
         },
         include: {
-          author: true
+          author: true,
         },
         orderBy: {
           createdAt: "desc",
-        }
+        },
       });
 
       return posts;
     }),
+  isPro: privateProcedure.query(async (opts) => {
+    const isPro = await checkSubscription();
+    return isPro;
+  }),
 });
 
 export type AppRouter = typeof appRouter;

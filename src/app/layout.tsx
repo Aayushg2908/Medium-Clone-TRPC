@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import TRPCProvider from "@/components/providers/trpc-provider";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
+import { ModalProvider } from "@/components/providers/modal-provider";
 
 const inter = Poppins({
   subsets: ["latin"],
@@ -26,6 +27,7 @@ export default function RootLayout({
         <TRPCProvider>
           <body className={inter.className}>
             <Toaster />
+            <ModalProvider />
             {children}
           </body>
         </TRPCProvider>

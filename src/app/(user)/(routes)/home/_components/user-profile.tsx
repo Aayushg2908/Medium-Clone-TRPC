@@ -11,9 +11,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User } from "lucide-react";
+import { LogOut, Settings, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { SignOutButton } from "@clerk/nextjs";
+import Link from "next/link";
 
 const UserProfile = () => {
   const { data, isLoading } = trpc.getUser.useQuery();
@@ -48,10 +49,17 @@ const UserProfile = () => {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="cursor-pointer">
+          <Settings className="mr-2 h-4 w-4" />
+          <Link href="/settings">Settings</Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem className="cursor-pointer">
           <SignOutButton signOutCallback={() => router.push("/")}>
             <LogOut className="mr-2 h-4 w-4" />
           </SignOutButton>
-          <SignOutButton signOutCallback={() => router.push("/")}>Log out</SignOutButton>
+          <SignOutButton signOutCallback={() => router.push("/")}>
+            Log out
+          </SignOutButton>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

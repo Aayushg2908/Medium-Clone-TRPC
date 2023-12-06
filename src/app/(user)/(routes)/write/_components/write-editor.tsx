@@ -20,6 +20,7 @@ import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Category } from "@prisma/client";
 import { Combobox } from "@/components/ui/combobox";
+import { useProModal } from "@/hooks/use-pro-modal";
 
 interface PostEditorProps {
   categories: Category[];
@@ -36,11 +37,18 @@ const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
 export const PostEditor = ({ categories }: PostEditorProps) => {
   const router = useRouter();
+  const proModal = useProModal();
   const createdPost = trpc.createPost.useMutation({
     onSuccess: (data) => {
       if (data.code === 200) {
         toast.success("Post created successfully");
+        router.refresh();
         router.push("/home");
+      }
+    },
+    onError: (error) => {
+      if (error.data?.code === "PRECONDITION_FAILED") {
+        proModal.onOpen();
       }
     },
   });
